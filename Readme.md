@@ -44,7 +44,7 @@
    ```
    QDRANT_URL=http://localhost:6333
    QDRANT_COLLECTION=northwind_rag
-   GEMINI_API_KEY=
+   GROQ_API_KEY=
    ```
 
 9. Run the embedding insertion script:

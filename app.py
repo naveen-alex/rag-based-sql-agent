@@ -26,14 +26,14 @@ def initialize_sql_agent():
         'collection_name': os.getenv('QDRANT_COLLECTION')
     }
     
-    gemini_api_key = os.getenv('GEMINI_API_KEY')
+    groq_api_key = os.getenv('GROQ_API_KEY')  # Updated variable name
     
-    if not gemini_api_key or not qdrant_config['url'] or not qdrant_config['collection_name']:
-        st.error("Please configure QDRANT_URL, QDRANT_COLLECTION, and GEMINI_API_KEY in the .env file")
+    if not groq_api_key or not qdrant_config['url'] or not qdrant_config['collection_name']:
+        st.error("Please configure QDRANT_URL, QDRANT_COLLECTION, and GROQ_API_KEY in the .env file")  # Updated error message
         st.stop()
     
     try:
-        return create_sql_agent(qdrant_config, gemini_api_key)
+        return create_sql_agent(qdrant_config, groq_api_key)  # Updated parameter name
     except Exception as e:
         st.error(f"Failed to initialize SQL Agent: {str(e)}")
         st.stop()

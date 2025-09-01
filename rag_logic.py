@@ -10,17 +10,18 @@ import json
 import qdrant_client
 from qdrant_client.http.models import Filter, FieldCondition, MatchValue
 from dotenv import load_dotenv
+from langchain_groq import ChatGroq  # Fixed import - use langchain_groq
 
 class SQLAgent:
-    def __init__(self, qdrant_config: Dict, gemini_api_key: str):
+    def __init__(self, qdrant_config: Dict, groq_api_key: str):
         """
-        Initialize SQL Agent with Qdrant and Gemini API
+        Initialize SQL Agent with Qdrant and GPT OSS 20B on Groq
         """
         # Load environment variables
         load_dotenv()
         
         self.qdrant_config = qdrant_config
-        self.gemini_api_key = gemini_api_key
+        self.groq_api_key = groq_api_key  # Updated variable name
         
         # Configure Qdrant client
         self.qdrant_client = qdrant_client.QdrantClient(
@@ -28,9 +29,11 @@ class SQLAgent:
         )
         self.collection_name = qdrant_config['collection_name']
         
-        # Configure Gemini
-        genai.configure(api_key=gemini_api_key)
-        self.model = genai.GenerativeModel('gemini-2.5-flash')
+        # Configure ChatGroq from langchain_groq
+        self.model = ChatGroq(
+            groq_api_key=groq_api_key,
+            model_name="openai/gpt-oss-20b"  # Changed to GPT model
+        )
         
         # Initialize sentence transformer for embeddings
         self.embedder = SentenceTransformer('all-MiniLM-L6-v2', device='cpu')
@@ -143,8 +146,8 @@ class SQLAgent:
         
         return relevant_tables
     
-    def _generate_sql_with_gemini(self, user_query: str, relevant_schema: str) -> str:
-        """Generate SQL query using Gemini LLM"""
+    def _generate_sql_with_gpt(self, user_query: str, relevant_schema: str) -> str:
+        """Generate SQL query using ChatGroq"""
         prompt = f"""
         You are an expert SQL developer. Given the user question and database schema, generate a precise PostgreSQL query.
         
@@ -164,8 +167,8 @@ class SQLAgent:
         """
         
         try:
-            response = self.model.generate_content(prompt)
-            sql_query = response.text.strip()
+            response = self.model.invoke(prompt)  # Use invoke method instead of generate
+            sql_query = response.content.strip()
             
             # Clean up the response to extract just the SQL
             if sql_query.startswith("```sql"):
@@ -228,8 +231,8 @@ class SQLAgent:
                 for table in relevant_tables
             ])
             
-            # Step 3: Generate SQL using Gemini
-            sql_query = self._generate_sql_with_gemini(user_query, schema_context)
+            # Step 3: Generate SQL using GPT OSS 20B
+            sql_query = self._generate_sql_with_gpt(user_query, schema_context)
             
             # Step 4: Execute SQL query
             results, columns = self._execute_sql_query(sql_query)
@@ -254,6 +257,6 @@ class SQLAgent:
                 'error': str(e)
             }
 
-def create_sql_agent(db_config: Dict, gemini_api_key: str) -> SQLAgent:
+def create_sql_agent(db_config: Dict, groq_api_key: str) -> SQLAgent:
     """Factory function to create SQL Agent"""
-    return SQLAgent(db_config, gemini_api_key)
+    return SQLAgent(db_config, groq_api_key)  # Updated parameter name

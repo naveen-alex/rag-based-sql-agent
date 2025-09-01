@@ -7,3 +7,4 @@ qdrant-client
 openai
 google-generativeai
 python-dotenv
+langchain

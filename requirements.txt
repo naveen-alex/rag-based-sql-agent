@@ -1,0 +1,9 @@
+streamlit
+psycopg2-binary
+sqlalchemy
+pandas
+sentence_transformers
+qdrant-client
+openai
+google-generativeai
+python-dotenv

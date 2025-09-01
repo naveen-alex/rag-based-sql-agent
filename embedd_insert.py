@@ -1,4 +1,4 @@
-import os, time
+import os
 import numpy as np
 from sqlalchemy import create_engine, inspect, text
 from sentence_transformers import SentenceTransformer

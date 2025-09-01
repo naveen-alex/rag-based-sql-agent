@@ -1,14 +1,8 @@
-import os
 import psycopg2
-import google.generativeai as genai
 from sentence_transformers import SentenceTransformer
-import numpy as np
-from sklearn.metrics.pairwise import cosine_similarity
 import pandas as pd
 from typing import List, Dict, Tuple
-import json
 import qdrant_client
-from qdrant_client.http.models import Filter, FieldCondition, MatchValue
 from dotenv import load_dotenv
 from langchain_groq import ChatGroq  # Fixed import - use langchain_groq
 

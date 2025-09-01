@@ -26,7 +26,7 @@ class SQLAgent:
         # Configure ChatGroq from langchain_groq
         self.model = ChatGroq(
             groq_api_key=groq_api_key,
-            model_name="openai/gpt-oss-20b"  # Changed to GPT model
+            model_name="openai/gpt-oss-120b"  # Changed to GPT model
         )
         
         # Initialize sentence transformer for embeddings
